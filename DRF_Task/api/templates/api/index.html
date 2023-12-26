@@ -1,0 +1,42 @@
+{% extends "api/base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+  {% for book in data %}
+    
+  <div class="card mb-3">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img src="{{book.cover_img|default:'{% static "img.png" %}'}}" class="img-fluid rounded-start h-100" alt="{{ book.title }}">
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">Book:{{ book.title }}</h5>
+          <p class="card-text">Description:{{ book.description }}</p>
+          <p class="card-text"><small class="text-muted">Published by {{ book.publisher }}</small></p>
+          <p class="card-text"><small class="text-muted">Author: {{ book.author }}</small></p>
+          <p class="card-text">
+            <small class="text-muted">
+              {% if book.in_stock %}
+              <span style="color: blue;">
+                In stock:  Available
+              </span>
+              
+              {% else %}
+              <span style="color: red;">
+                Out of Stock
+              </span>
+              {% endif %}
+              
+            </small>
+          </p>
+          <p class="card-text"><small class="text-muted">Created: {{ book.created }}</small></p>
+          <a href="#" class="btn btn-primary">Buy Now</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  
+</div>
+{% endblock content %}

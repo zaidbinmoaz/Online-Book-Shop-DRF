@@ -27,7 +27,6 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self,validate_data):
         return CustomUser.objects.create_user(**validate_data)
 
-
 class LoginSerializer(serializers.ModelSerializer):
     email=serializers.EmailField(max_length=255)
 
@@ -42,30 +41,19 @@ class UserProfileSerializer(serializers.ModelSerializer):
         fields=['id','name','email','is_author']
 
 
-# class BookSerializer(serializers.ModelSerializer):
-#     author = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Book
-#         fields = ['title', 'description', 'cover_img', 'publisher', 'author', 'in_stock', 'created']
-
-#     def get_author(self, obj):
-#         return self.context['request'].user.name
-
-class BookSerializer(serializers.ModelSerializer):
-    author = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
-
+class CustomPrimaryKeyRelatedField(serializers.PrimaryKeyRelatedField):
     def get_queryset(self):
         user_id = self.context['request'].user.id
         queryset = CustomUser.objects.filter(id=user_id)
         return queryset
+
+
+class BookAuthorDetail(serializers.ModelSerializer):
+    author=UserSerializer()
     class Meta:
         model = Book
         fields = ['id', 'title', 'description', 'cover_img', 'publisher','author', 'in_stock', 'created']
-    def create(self,validated_data):
-        password=validated_data.pop('password',None)
-        instance=self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-        instance.save()
-        return instance
+
+
+class BookSerializer(BookAuthorDetail):
+    author = serializers.PrimaryKeyRelatedField(queryset=CustomUser.objects.all())

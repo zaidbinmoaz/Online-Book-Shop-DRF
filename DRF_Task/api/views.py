@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from api.models import Book
-from api.serializers import BookSerializer
 from rest_framework.response import Response
 from rest_framework import viewsets,renderers
 from rest_framework import status
@@ -10,11 +9,11 @@ from api.utils import get_data
 from django.views.generic import TemplateView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.contrib.auth import authenticate
-from .serializers import BookSerializer,UserRegistrationSerializer,LoginSerializer,UserProfileSerializer
-from .renderers import UserRenderer
+from .serializers import BookSerializer,UserRegistrationSerializer,LoginSerializer,UserProfileSerializer,BookAuthorDetail
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend
-
+from api.filters import BookFilter
+from rest_framework import filters
 
 # Create your views here.
 
@@ -32,13 +31,16 @@ class BookViewSet(viewsets.ViewSet):
     serializer_class = BookSerializer
     authentication_classes=[JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    filter_backends = [DjangoFilterBackend]
-    # filterset_class = BookFilter
-    filter_fields = ( 
-        'title', 
-        'publisher', 
-    )
+    # filter_backends = [DjangoFilterBackend]
+    # filterset_fields = ['title', 'publisher'] 
     
+    def get_queryset(self,request):
+        user_id=request.user.id
+        print("queryset")
+        queryset=Book.objects.filter(id=user_id)
+        return queryset
+
+
     def create(self,request):
         print(request.user.is_author)
         if request.user.is_author:
@@ -52,20 +54,25 @@ class BookViewSet(viewsets.ViewSet):
         return Response({'msg':'You must login from author account to post book details'})
     
     def list(self, request):
+        print(request.query_params.get('title'))
         queryset = Book.objects.all()
-        serializer = BookSerializer(queryset, many=True)
+        if request.query_params.get('title'):
+            queryset=Book.objects.filter(title=request.query_params.get('title'))
+        elif request.query_params.get('author'):
+            queryset = Book.objects.filter(author__name=request.query_params.get('author'))
+            
+        serializer = BookAuthorDetail(queryset, many=True)
         return Response(serializer.data)
 
     def retrieve(self,request,pk):
         id=pk
         obj=Book.objects.get(id=id)
-        serializer=BookSerializer(obj)
+        serializer=BookAuthorDetail(obj)
         return Response(serializer.data)     
     
 
     def update(self,request,pk):
         id=pk
-        # book_author=Book.objects.filter(id=id).values('name')
         obj=Book.objects.get(pk=id)
         if (request.user.is_author) and (obj.author.name==request.user.name): 
             serializer=BookSerializer(obj,data=request.data)
@@ -97,12 +104,11 @@ class HomeView(TemplateView):
     template_name = 'api/index.html'
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['data'] = get_data()
+        context["data"] = get_data()
         return context
     
 
 class RegisterUser(APIView):
-    renderer_classes=[UserRenderer]
     def post(self,request,format=None):
         serializer=UserRegistrationSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
@@ -110,10 +116,6 @@ class RegisterUser(APIView):
             token=get_tokens_for_user(user)
             return Response({'token':token,'msg':'sign up successful'},status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        # serializer=UserSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
-        # serializer.save()
-        # return Response(serializer.data)
     
 class Login(APIView):
     def post(self,request,format=None):
@@ -131,7 +133,6 @@ class Login(APIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class UserDetail(APIView):
-    renderer_classes = [UserRenderer]
     permission_classes=[IsAuthenticated]
     def get (self, request, format=None):
         serializer = UserProfileSerializer(request.user)

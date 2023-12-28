@@ -43,11 +43,11 @@ class CustomUser(AbstractBaseUser):
 
 class Book(models.Model):
     title = models.CharField(max_length=100)
-    description = models.TextField(blank=True)
-    cover_img = models.ImageField(upload_to='images/', default='images/img.png',blank=True)
-    publisher = models.CharField(max_length=200)
-    author = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name='books')
-    in_stock = models.BooleanField(default=True)
+    description = models.TextField(blank=True,null=True)
+    cover_img = models.ImageField(upload_to='images/', default='images/img.png',blank=True,null=True)
+    publisher = models.CharField(max_length=200,blank=True,null=True)
+    author = models.ForeignKey(CustomUser,on_delete=models.CASCADE, related_name='books',blank=True,null=True)
+    in_stock = models.BooleanField(default=True,blank=True,null=True)
     created = models.DateField(auto_now_add=True)
 
     def __str__(self):

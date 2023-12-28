@@ -6,10 +6,10 @@ from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView,TokenRefreshView,TokenVerifyView
 router=DefaultRouter()
 
-router.register(r'epicbooks', BookViewSet,basename='Books')
+router.register(r'epicbooks', BookViewSet,basename='books')
 
 urlpatterns = [
-    path('',include(router.urls)),
+    path('',include(router.urls),name='epicbooks'),
     path('home/',HomeView.as_view(),name='home'),
     path('register/',RegisterUser.as_view(),name='signup'),
     path('login/',Login.as_view(),name='login'),

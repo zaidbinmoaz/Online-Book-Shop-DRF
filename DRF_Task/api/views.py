@@ -27,31 +27,22 @@ def get_tokens_for_user(user):
 
 
 class BookViewSet(viewsets.ViewSet):
-    # queryset = Book.objects.all()
     serializer_class = BookSerializer
     authentication_classes=[JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    # filter_backends = [DjangoFilterBackend]
-    # filterset_fields = ['title', 'publisher'] 
     
-    def get_queryset(self,request):
-        user_id=request.user.id
-        print("queryset")
-        queryset=Book.objects.filter(id=user_id)
-        return queryset
 
 
     def create(self,request):
-        print(request.user.is_author)
         if request.user.is_author:
-            data=request.data
+            data=request.data.copy()
             data['author']=request.user.id
             serializer = BookSerializer(data=data)
             if serializer.is_valid():
                 serializer.save()
                 return Response({'msg':'data is created'},status=status.HTTP_201_CREATED)
             return  Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
-        return Response({'msg':'You must login from author account to post book details'})
+        return Response({'msg':'You must login from author account to post book details'},status=status.HTTP_200_OK)
     
     def list(self, request):
         print(request.query_params.get('title'))

@@ -1,6 +1,15 @@
 from django.contrib.auth.models import BaseUserManager
+
+
 class CustomManager(BaseUserManager):
-    def create_user(self, email, name, is_author, password=None,password2=None):
+    def create_user(
+        self,
+        email,
+        name,
+        is_author,
+        password=None,
+        password2=None,
+    ):
         """
         Creates and saves a User with the given email, date of
         birth and password.

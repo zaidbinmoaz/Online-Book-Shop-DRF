@@ -18,7 +18,10 @@ class BookViewSetTestCase(TestCase):
             }
         )
         self.user = get_user_model().objects.create_user(
-            email="zain@gmail.com", name="zain", password="admin", is_author=True
+            email="zain@gmail.com",
+            name="zain",
+            password="admin",
+            is_author=True,
         )
         self.book_data = {
             "id": "1",
@@ -42,7 +45,7 @@ class BookViewSetTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_book(self):
-        request = self.factory.post(f"/epicbooks/", self.b_data)
+        request = self.factory.post("api:epicbooks", self.b_data)
         force_authenticate(request, user=self.user)
         response = self.view(request)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

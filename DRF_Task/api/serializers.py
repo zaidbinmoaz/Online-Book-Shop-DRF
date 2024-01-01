@@ -1,4 +1,4 @@
-from api.models import Book, CustomUser
+from api.models import Book, CustomUser, Favourite
 from rest_framework import serializers
 from rest_framework.serializers import PrimaryKeyRelatedField
 
@@ -69,8 +69,15 @@ class BookAuthorDetail(serializers.ModelSerializer):
             "author",
             "in_stock",
             "created",
+            "is_favourite",
         ]
 
 
 class BookSerializer(BookAuthorDetail):
     author = PrimaryKeyRelatedField(queryset=CustomUser.objects.all())
+
+
+class FavouriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourite
+        fields = ["user", "book"]

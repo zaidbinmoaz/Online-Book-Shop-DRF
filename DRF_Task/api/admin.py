@@ -1,4 +1,4 @@
-from api.models import Book, CustomUser
+from api.models import Book, CustomUser, Favourite
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 
@@ -21,7 +21,13 @@ class UserAdmin(BaseUserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("email", "name", "is_author", "password", "password2"),
+                "fields": (
+                    "email",
+                    "name",
+                    "is_author",
+                    "password",
+                    "password2",
+                ),
             },
         ),
     ]
@@ -33,11 +39,20 @@ class UserAdmin(BaseUserAdmin):
 # Now register the new UserAdmin...
 admin.site.register(CustomUser, UserAdmin)
 
+admin.site.register(Favourite)
+
 
 # Register your models here.
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ["id", "title", "description", "cover_img", "author", "in_stock"]
+    list_display = [
+        "id",
+        "title",
+        "description",
+        "cover_img",
+        "author",
+        "in_stock",
+    ]
 
 
 # admin.site.register(CustomUser)

@@ -11,6 +11,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import (
     BookAuthorDetail,
     BookSerializer,
+    FavouriteSerializer,
     LoginSerializer,
     UserProfileSerializer,
     UserRegistrationSerializer,
@@ -43,7 +44,10 @@ class BookViewSet(viewsets.ViewSet):
                 return Response(
                     {"msg": "data is created"}, status=status.HTTP_201_CREATED
                 )
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         return Response(
             {"msg": "You must login from author account to post book details"},
             status=status.HTTP_200_OK,
@@ -102,21 +106,32 @@ class BookViewSet(viewsets.ViewSet):
             {"msg": "You must login from author account to delete this book"}
         )
 
-    @action(detail=True, methods=["post"])
-    def add_to_favourite(self, request, pk=None):
-        book = self.get_object()
-        user = request.user
-        favourite, created = Favourite.objects.get_or_create(
-            user=request.user, book=book
-        )
-        if created:
-            return Response(
-                {"status": "book added to favourites"}, status=status.HTTP_201_CREATED
-            )
-        else:
-            return Response(
-                {"status": "book already in favourites"}, status=status.HTTP_200_OK
-            )
+    @action(
+        detail=True,
+        methods=["post", "get"],
+        permission_classes=[IsAuthenticated],
+        authentication_classes=[JWTAuthentication],
+    )
+    def add_to_favourite(self, request, pk):
+        id = pk
+        if request.method == "POST":
+            book = Book.objects.get(pk=id)
+            user = request.user
+            favourite, created = Favourite.objects.get_or_create(user=user, book=book)
+            if created:
+                return Response(
+                    {"status": "book added to favourites"},
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                return Response(
+                    {"status": "book already in favourites"}, status=status.HTTP_200_OK
+                )
+        elif request.method == "GET":
+            user = request.user
+            favourites = Favourite.objects.filter(user=user)
+            serializer = FavouriteSerializer(favourites, many=True)
+            return Response(serializer.data)
 
 
 class RegisterUser(APIView):

@@ -7,13 +7,6 @@ repos:
           (?x)^(.*/settings\.py|.*migrations.*)$
         args: [--max-line-length=120]
          
-  
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        exclude: |
-          (?x)^(.*/settings\.py|.*migrations.*)$
 
   - repo: https://github.com/psf/black
     rev: 23.12.1

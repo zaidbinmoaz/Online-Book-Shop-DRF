@@ -18,11 +18,18 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView,
+)
 
-# from rest_framework_simplejwt.views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("api.urls", namespace="api")),
+    path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("schema/docs/", SpectacularSwaggerView.as_view(url_name="schema")),
+    path("schema/redocs/", SpectacularRedocView.as_view(url_name="schema")),
 ]
 
 

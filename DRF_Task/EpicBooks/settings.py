@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "api",
     "django_filters",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -74,15 +75,6 @@ WSGI_APPLICATION = "EpicBooks.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql",
-#         "OPTIONS": {
-#             "service": "my_service",
-#             "passfile": ".my_pgpass",
-#         },
-#     }
-# }
 
 DATABASES = {
     "default": {
@@ -157,6 +149,11 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 5,
+    "DEFAULT_SCHEMA_CLASS":"drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETINGS={
+    "TITLE":"Django DRF Online Book Shop",
 }
 
 

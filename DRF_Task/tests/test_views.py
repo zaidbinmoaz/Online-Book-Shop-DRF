@@ -23,19 +23,20 @@ class BookViewSetTestCase(TestCase):
             password="admin",
             is_author=True,
         )
+        self.book = Book.objects.create(
+            title="Test Book", author=self.user, created="2023-12-26"
+        )
         self.book_data = {
-            "id": "1",
+            "id": "2",
             "title": "Test Book",
             "description": "xyz",
             "cover_img": "/media/images/att_Nctgurx.jpg",
             "author": "3",
             "in_stock": "True",
             "created": "2023-12-26",
+            "is_favourite": "True",
         }
         self.b_data = {"title": "Test Book", "created": "2023-12-26"}
-        self.book = Book.objects.create(
-            title="Test Book", author=self.user, created="2023-12-26"
-        )
 
     def test_retrieve_book(self):
         pk = self.book_data["id"]
@@ -51,7 +52,7 @@ class BookViewSetTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_update_book(self):
-        pk = self.book_data["id"]
+        pk = self.book.id
         request = self.factory.put(f"/epicbooks/{pk}/", self.book_data)
 
         force_authenticate(request, user=self.user)
@@ -59,7 +60,7 @@ class BookViewSetTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_partial_update_book(self):
-        pk = self.book_data["id"]
+        pk = self.book.id
         request = self.factory.patch(f"/epicbooks/{pk}/", self.book_data)
 
         force_authenticate(request, user=self.user)

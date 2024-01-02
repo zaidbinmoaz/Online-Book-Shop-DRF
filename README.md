@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # DRF-task-Online-Book-Shop-
 # EpicBooks API
 
@@ -26,3 +27,6 @@ To run the tests for the `EpicBooks` API, use the following command:
 
 ```bash
 python manage.py test
+=======
+# DRF-task-Online-Book-Shop
+>>>>>>> 3fc4084 (-middleware applied -test-cases improved)

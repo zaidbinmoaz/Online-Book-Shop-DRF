@@ -7,7 +7,6 @@ class CustomManager(BaseUserManager):
         email,
         name,
         is_author,
-        favourite_books,
         password=None,
         password2=None,
     ):

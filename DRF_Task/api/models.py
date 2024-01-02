@@ -14,6 +14,8 @@ class CustomUser(AbstractBaseUser):
     is_author = models.BooleanField()
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    blocked = models.BooleanField(default=False, null=True, blank=True)
+    deleted = models.BooleanField(default=False, null=True, blank=True)
     objects = CustomManager()
 
     USERNAME_FIELD = "email"
@@ -55,7 +57,7 @@ class Book(models.Model):
     )
     in_stock = models.BooleanField(default=True, blank=True, null=True)
     created = models.DateField(auto_now_add=True)
-    is_favourite = models.BooleanField(default=False)
+    is_favourite = models.BooleanField(default=False, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -75,3 +77,14 @@ class Favourite(models.Model):
 
     def __str__(self):
         return self.book.title
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.book.title
+
+    class Meta:
+        verbose_name_plural = "Cart"

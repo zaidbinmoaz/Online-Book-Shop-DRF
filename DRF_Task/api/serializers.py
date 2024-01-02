@@ -1,4 +1,4 @@
-from api.models import Book, CustomUser, Favourite
+from api.models import Book, CustomUser, Favourite, Cart
 from rest_framework import serializers
 from rest_framework.serializers import PrimaryKeyRelatedField
 
@@ -80,4 +80,10 @@ class BookSerializer(BookAuthorDetail):
 class FavouriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favourite
+        fields = ["user", "book"]
+
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cart
         fields = ["user", "book"]

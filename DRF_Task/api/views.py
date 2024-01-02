@@ -1,4 +1,4 @@
-from api.models import Book, Favourite
+from api.models import Book, Favourite, Cart
 from django.contrib.auth import authenticate
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -15,6 +15,7 @@ from .serializers import (
     LoginSerializer,
     UserProfileSerializer,
     UserRegistrationSerializer,
+    CartSerializer,
 )
 
 # Create your views here.
@@ -131,6 +132,33 @@ class BookViewSet(viewsets.ViewSet):
             user = request.user
             favourites = Favourite.objects.filter(user=user)
             serializer = FavouriteSerializer(favourites, many=True)
+            return Response(serializer.data)
+
+    @action(
+        detail=True,
+        methods=["post", "get"],
+        permission_classes=[IsAuthenticated],
+        authentication_classes=[JWTAuthentication],
+    )
+    def add_to_cart(self, request, pk):
+        id = pk
+        if request.method == "POST":
+            book = Book.objects.get(pk=id)
+            user = request.user
+            cart_item, created = Cart.objects.get_or_create(user=user, book=book)
+            if created:
+                return Response(
+                    {"status": "book added to favourites"},
+                    status=status.HTTP_201_CREATED,
+                )
+            else:
+                return Response(
+                    {"status": "book already in favourites"}, status=status.HTTP_200_OK
+                )
+        elif request.method == "GET":
+            user = request.user
+            cart_items = Cart.objects.filter(user=user)
+            serializer = CartSerializer(cart_items, many=True)
             return Response(serializer.data)
 
 

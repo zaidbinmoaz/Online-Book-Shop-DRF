@@ -55,9 +55,24 @@ class Book(models.Model):
         blank=True,
         null=True,
     )
-    in_stock = models.BooleanField(default=True, blank=True, null=True)
-    created = models.DateField(auto_now_add=True)
-    is_favourite = models.BooleanField(default=False, blank=True, null=True)
+    in_stock = models.BooleanField(
+        default=True,
+        blank=True,
+        null=True,
+    )
+    created = models.DateField(
+        auto_now_add=True,
+    )
+    is_favourite = models.BooleanField(
+        default=False,
+        blank=True,
+        null=True,
+    )
+    price = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        default=500.00,
+    )
 
     def __str__(self):
         return self.title

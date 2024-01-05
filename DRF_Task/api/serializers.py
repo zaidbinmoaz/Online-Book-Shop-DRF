@@ -70,6 +70,7 @@ class BookAuthorDetail(serializers.ModelSerializer):
             "in_stock",
             "created",
             "is_favourite",
+            "price",
         ]
 
 

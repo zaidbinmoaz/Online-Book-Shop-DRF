@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Karachi"
 
 USE_I18N = True
 
@@ -166,3 +166,8 @@ SIMPLE_JWT = {
 }
 
 AUTH_USER_MODEL = "api.CustomUser"
+
+
+CELERY_BROKER_URL="redis://127.0.0.1:6379/0"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_TIMEZONE = "Asia/Karachi"

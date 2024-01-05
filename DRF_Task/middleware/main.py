@@ -11,9 +11,6 @@ class BlockedUsersMiddleware:
         print(get_response)
 
     def __call__(self, request):
-        # print(request.headers['Authorization'], "/////")
-        print(request.headers, "/////")
-
         auth_header = request.headers.get("Authorization", None)
         if not auth_header or not auth_header.startswith("Bearer "):
             return self.get_response(request)
@@ -40,8 +37,10 @@ class DeletedUsersMiddleware:
         print(get_response)
 
     def __call__(self, request):
-        print(request.headers, "/////")
-        auth_header = request.headers["Authorization"]
+        auth_header = request.headers.get(
+            "Authorization",
+            None,
+        )
         if not auth_header or not auth_header.startswith("Bearer "):
             return self.get_response(request)
 

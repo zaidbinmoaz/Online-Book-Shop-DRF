@@ -68,9 +68,7 @@ class Book(models.Model):
         blank=True,
         null=True,
     )
-    price = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    price = models.FloatField(
         default=500.00,
     )
 

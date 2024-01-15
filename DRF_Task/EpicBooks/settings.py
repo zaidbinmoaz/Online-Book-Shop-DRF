@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "api",
     "django_filters",
     "drf_spectacular",
+    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -170,4 +171,5 @@ AUTH_USER_MODEL = "api.CustomUser"
 
 CELERY_BROKER_URL="redis://127.0.0.1:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
+CELERY_CACHE_BACKEND = 'default'
 CELERY_TIMEZONE = "Asia/Karachi"

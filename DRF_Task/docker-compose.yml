@@ -1,0 +1,132 @@
+version: "3.8"
+
+services:
+  db:
+    container_name: db
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=zaidm
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=db_books
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+  redis:
+    container_name: redis
+    image: redis:alpine
+    networks:
+      - mynetwork
+    # ports:
+    #   - "6370:6379"
+
+  web:
+    container_name: web
+    build: .
+    volumes:
+      - .:/app/
+    command: python manage.py runserver 0.0.0.0:8000
+
+    environment:
+      - 1=db
+      - DB_NAME=db_books
+      - DB_USER=zaidm
+      - DB_PASS=admin
+
+    ports:
+      - "8080:8000"
+    networks:
+      - mynetwork
+    # depends_on:
+    #   - db
+    #   - redis
+  celery:
+    restart: always
+    container_name: celery
+    build: .
+    command: celery -A EpicBooks worker -l info
+    volumes:
+      - .:/app/
+    environment:
+      - DB_HOST=db
+      - DB_NAME=db_books
+      - DB_USER=zaidm
+      - DB_PASS=admin
+    depends_on:
+      - db
+      - redis
+      - web
+    networks:
+      - mynetwork
+  celery-beat:
+    container_name: celery-beat
+    build: .
+    command: celery -A EpicBooks beat -l info
+    volumes:
+      - .:/app/
+    depends_on:
+      - db
+      - redis
+      - celery
+    networks:
+      - mynetwork
+volumes:
+  postgres_data:
+
+networks:
+  mynetwork:
+
+
+# services:
+#   db:
+#     image: postgres
+#     environment:
+#       - POSTGRES_DB=db_books
+#       - POSTGRES_USER=zaidm
+#       - POSTGRES_PASSWORD=admin
+#     ports:
+#       - "5430:5432"
+#     networks:
+#       - mynetwork
+#   redis:
+#     image: redis:alpine
+#     ports:
+#       - "6370:6379"
+#     networks:
+#       - mynetwork
+
+#   web:
+#     build: .
+#     command: python manage.py runserver 0.0.0.0:8000
+#     volumes:
+#       - .:/app
+#     ports:
+#       - "8080:8000"
+#     depends_on:
+#       - db
+#       - redis
+#     networks:
+#       - mynetwork
+#   celery:
+#     build: .
+#     command: celery -A EpicBooks worker -l info
+#     volumes:
+#       - .:/code
+#     depends_on:
+#       - db
+#       - redis
+#     networks:
+#       - mynetwork
+#   celery-beat:
+#     build: .
+#     command: celery -A EpicBooks beat -l info
+#     volumes:
+#       - .:/app
+#     depends_on:
+#       - db
+#       - redis
+#     networks:
+#       - mynetwork
+

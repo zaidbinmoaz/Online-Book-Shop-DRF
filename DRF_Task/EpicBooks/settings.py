@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+import socket
 from datetime import timedelta
 from pathlib import Path
 
@@ -22,7 +23,8 @@ SECRET_KEY = "django-insecure-1-2andnccfd3zsf-(@0y3frgn@9mp(ep()et^3x1ly7j!pvrw%
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
+# ALLOWED_HOSTS = [socket.gethostname()]
 
 
 # Application definition
@@ -85,7 +87,7 @@ DATABASES = {
         "NAME": "db_books",
         "USER": "zaidm",
         "PASSWORD": "admin",
-        "HOST": "127.0.0.1",
+        "HOST": "db",
         "PORT": "5432",
     }
 }
@@ -152,11 +154,11 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 5,
-    "DEFAULT_SCHEMA_CLASS":"drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-SPECTACULAR_SETINGS={
-    "TITLE":"Django DRF Online Book Shop",
+SPECTACULAR_SETINGS = {
+    "TITLE": "Django DRF Online Book Shop",
 }
 
 
@@ -169,7 +171,7 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = "api.CustomUser"
 
 
-CELERY_BROKER_URL="redis://127.0.0.1:6379/0"
-CELERY_RESULT_BACKEND = "redis://localhost:6379"
-CELERY_CACHE_BACKEND = 'default'
+CELERY_BROKER_URL = "redis://redis:6379/0"
+CELERY_RESULT_BACKEND = "redis://redis:6379/1"
+CELERY_CACHE_BACKEND = "default"
 CELERY_TIMEZONE = "Asia/Karachi"
